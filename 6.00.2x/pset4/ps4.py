@@ -131,7 +131,13 @@ def generate_models(x, y, degs):
         that minimizes the squared error of the fitting polynomial
     """
     # TODO
-    pass
+    models = []
+    Xn = np.array(x)
+    Yn = np.array(y)
+    for deg in degs:
+        models.append(np.polyfit(Xn,Yn,deg))
+    return models
+    #pass
 
 # Problem 2
 def r_squared(y, estimated):
@@ -144,7 +150,14 @@ def r_squared(y, estimated):
         a float for the R-squared error term
     """
     # TODO
-    pass
+    m = sum(y)/len(y)
+    s1 = []
+    s2 = []
+    for i in range(len(y)):
+        s1.append((y[i]-estimated[i])**2)
+        s2.append((y[i]-m)**2)
+    return 1-sum(s1)/sum(s2)
+    #pass
 
 # Problem 3
 def evaluate_models_on_training(x, y, models):
@@ -169,7 +182,19 @@ def evaluate_models_on_training(x, y, models):
         None
     """
     # TODO
-    pass
+
+    pylab.plot(x, y, 'ob', label='Data')
+    for i in range(len(models)):
+        estY = pylab.polyval(models[i], x)
+        error = r_squared(y, estY)
+        degree = len(models[i]) - 1
+        pylab.plot(x, estY, 'r', label='Fit of degree ' +
+            str(degree) + ', R2 = '+ str(round(error, 3)))
+    
+    pylab.legend(loc='best')
+    title = 'Fit of degree ' + str(degree) + ' R2 = ' + str(round(error, 5))
+    pylab.title(title)
+    pylab.show()
 
 
 ### Begining of program
@@ -189,5 +214,7 @@ x1 = INTERVAL_1
 x2 = INTERVAL_2
 y = []
 # MISSING LINES
+for year in INTERVAL_1:
+    y.append(np.mean(raw_data.get_yearly_temp('BOSTON',year)))
 models = generate_models(x, y, [1])    
 evaluate_models_on_training(x, y, models)
